@@ -418,15 +418,47 @@
             <reporting>
                 <plugins>
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>cobertura-maven-plugin</artifactId>
-                        <version>${cobertura.version}</version>
-                        <configuration>
-                            <formats>
-                                <format>html</format>
-                                <format>xml</format>
-                            </formats>
-                        </configuration>
+                        <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.8</version> <!-- Use the latest version available -->
+            <executions>
+                <!-- Prepare the instrumented classes during the build phase -->
+                <execution>
+                    <goals>
+                        <goal>prepare-agent</goal>
+                    </goals>
+                    <phase>initialize</phase>
+                </execution>
+
+                <!-- Generate the report during the test phase -->
+                <execution>
+                    <goals>
+                        <goal>report</goal>
+                    </goals>
+                    <phase>post-integration-test</phase>
+                    <configuration>
+                        <outputDirectory>${project.build.directory}/jacoco-coverage-report</outputDirectory>
+                    </configuration>
+                </execution>
+
+                <!-- Enforce coverage metrics (optional) -->
+                <execution>
+                    <goals>
+                        <goal>check</goal>
+                    </goals>
+                    <phase>verify</phase>
+                    <configuration>
+                        <rule>
+                            <priority>HIGH</priority>
+                            <limit>
+                                <counter>LINE</counter>
+                                <value>COVEREDRATIO</value>
+                                <minimum>0.10</minimum> <!-- 10% line coverage required -->
+                            </limit>
+                        </rule>
+                    </configuration>
+                </execution>
+            </executions>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
